@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert'; // JSONエンコード/デコードのために追加
+import 'package:shared_preferences/shared_preferences.dart'; // shared_preferencesのインポート
 import 'screens/add_supplement.dart';
 import 'screens/supplement_detail.dart';
 import 'models/supplement.dart';
@@ -28,6 +30,30 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Supplement> supplements = [];
 
+    // 1. アプリ起動時にデータをロード
+  @override
+  void initState() {
+    super.initState();
+    _loadSupplements();
+  }
+
+  // 2. サプリメントデータの保存処理
+  Future<void> _saveSupplements() async {
+    final prefs = await SharedPreferences.getInstance();
+    final supplementList = supplements.map((s) => jsonEncode(s.toMap())).toList();
+    await prefs.setStringList('supplements', supplementList);
+  }
+
+  // 3. サプリメントデータの読み込み処理
+  Future<void> _loadSupplements() async {
+    final prefs = await SharedPreferences.getInstance();
+    final supplementList = prefs.getStringList('supplements') ?? [];
+    setState(() {
+      supplements = supplementList.map((s) => Supplement.fromMap(jsonDecode(s))).toList();
+    });
+  }
+
+
   void updateSupplement(Supplement updatedSupplement) {
     setState(() {
       final index = supplements.indexWhere((s) => s.name == updatedSupplement.name);
@@ -35,12 +61,14 @@ class _MyHomePageState extends State<MyHomePage> {
         supplements[index] = updatedSupplement;
       }
     });
+    _saveSupplements();
   }
 
   void deleteSupplement(Supplement supplement) {
     setState(() {
       supplements.remove(supplement);
     });
+    _saveSupplements();
   }
 
   @override
@@ -84,6 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
             setState(() {
               supplements.add(newSupplement);
             });
+            _saveSupplements();
           }
         },
         child: Icon(Icons.add),
