@@ -18,8 +18,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   // 残薬が無くなる日を計算するメソッド
   DateTime _getDepletionDate(Supplement supplement) {
     int daysUntilEmpty = (supplement.remaining / supplement.dailyIntake).ceil();
-    final tzDepletionDate = tz.TZDateTime.now(tz.local).add(Duration(days: daysUntilEmpty));
-    return DateTime(tzDepletionDate.year, tzDepletionDate.month, tzDepletionDate.day);
+  final tzDepletionDate = tz.TZDateTime.now(tz.local).add(Duration(days: daysUntilEmpty - 1));
+  return DateTime(tzDepletionDate.year, tzDepletionDate.month, tzDepletionDate.day);
   }
 
   // 各サプリメントの残薬切れ予測日を収集するメソッド
@@ -73,6 +73,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
         firstDay: DateTime.now(),
         lastDay: DateTime.now().add(Duration(days: 365)),
         focusedDay: DateTime.now(),
+        availableCalendarFormats: const{
+          CalendarFormat.month: 'Month',
+        },
         selectedDayPredicate: (day) => isSameDay(day, _selectedDay),
         onDaySelected: (selectedDay, focusedDay) {
           setState(() {
