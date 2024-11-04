@@ -91,7 +91,6 @@ class _AddSupplementScreenState extends State<AddSupplementScreen> {
                       dose: dose,
                       dailyIntake: dailyIntake,
                     );
-                    // 登録したデータを保存する処理を追加
                     Navigator.pop(context, newSupplement);
                   }
                 },
