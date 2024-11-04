@@ -1,11 +1,22 @@
 import 'package:flutter/material.dart';
-import 'dart:convert'; // JSONエンコード/デコードのために追加
-import 'package:shared_preferences/shared_preferences.dart'; // shared_preferencesのインポート
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/add_supplement.dart';
 import 'screens/supplement_detail.dart';
+import 'screens/calendar_screen.dart'; // カレンダー画面のインポート
 import 'models/supplement.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Flutterの初期化
+
+  // タイムゾーンの初期化
+  tz.initializeTimeZones();
+  
+  // ローカルタイムゾーンの設定
+  tz.setLocalLocation(tz.getLocation('America/Los_Angeles')); // 適切なタイムゾーンに変更してください
+  
   runApp(MyApp());
 }
 
@@ -30,21 +41,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Supplement> supplements = [];
 
-    // 1. アプリ起動時にデータをロード
   @override
   void initState() {
     super.initState();
     _loadSupplements();
   }
 
-  // 2. サプリメントデータの保存処理
   Future<void> _saveSupplements() async {
     final prefs = await SharedPreferences.getInstance();
     final supplementList = supplements.map((s) => jsonEncode(s.toMap())).toList();
     await prefs.setStringList('supplements', supplementList);
   }
 
-  // 3. サプリメントデータの読み込み処理
   Future<void> _loadSupplements() async {
     final prefs = await SharedPreferences.getInstance();
     final supplementList = prefs.getStringList('supplements') ?? [];
@@ -52,7 +60,6 @@ class _MyHomePageState extends State<MyHomePage> {
       supplements = supplementList.map((s) => Supplement.fromMap(jsonDecode(s))).toList();
     });
   }
-
 
   void updateSupplement(Supplement updatedSupplement) {
     setState(() {
@@ -76,6 +83,19 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('サプリメント管理アプリ'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.calendar_today),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CalendarScreen(supplements: supplements),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: supplements.isEmpty
           ? Center(child: Text('サプリメントが登録されていません'))
@@ -86,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 return ListTile(
                   title: Text(supplement.name),
                   subtitle: Text(
-                      'カテゴリー: ${supplement.category}, 形状: ${supplement.form}'),
+                      'カテゴリー: ${supplement.category}, 形状: ${supplement.form}, 残薬数: ${supplement.remaining}'),
                   onTap: () {
                     Navigator.push(
                       context,

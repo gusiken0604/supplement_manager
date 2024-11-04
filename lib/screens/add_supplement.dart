@@ -18,16 +18,19 @@ class _AddSupplementScreenState extends State<AddSupplementScreen> {
   late String form;
   late int dose;
   late int dailyIntake;
+  late int remaining; // 残薬数のフィールド
 
   @override
   void initState() {
     super.initState();
     // initialSupplementがある場合はその値を使用し、ない場合はデフォルト値を設定
     name = widget.initialSupplement?.name ?? '';
+    name = widget.initialSupplement?.name ?? '';
     category = widget.initialSupplement?.category ?? '';
     form = widget.initialSupplement?.form ?? '';
-    dose = widget.initialSupplement?.dose ?? 0;
-    dailyIntake = widget.initialSupplement?.dailyIntake ?? 1;
+    dose = widget.initialSupplement?.dose ?? 0; // デフォルト値0を設定
+    dailyIntake = widget.initialSupplement?.dailyIntake ?? 1; // デフォルト値1を設定
+    remaining = widget.initialSupplement?.remaining ?? 0; // デフォルト値0を設定
   }
 
   @override
@@ -74,17 +77,28 @@ class _AddSupplementScreenState extends State<AddSupplementScreen> {
               ),
               // 摂取量
               TextFormField(
-                initialValue: dose.toString(),
-                decoration: InputDecoration(labelText: '1回の摂取量（mg）'),
+                initialValue: remaining.toString(),
+                decoration: InputDecoration(labelText: '残薬数'),
                 keyboardType: TextInputType.number,
-                onChanged: (value) => dose = int.tryParse(value) ?? 0,
+                onChanged: (value) {
+                  remaining = int.tryParse(value) ?? 0; // nullの場合に0を設定
+                },
               ),
-              // 摂取回数
               TextFormField(
                 initialValue: dailyIntake.toString(),
                 decoration: InputDecoration(labelText: '1日の摂取回数'),
                 keyboardType: TextInputType.number,
-                onChanged: (value) => dailyIntake = int.tryParse(value) ?? 1,
+                onChanged: (value) {
+                  dailyIntake = int.tryParse(value) ?? 1; // nullの場合に1を設定
+                },
+              ),
+              TextFormField(
+                initialValue: dose.toString(),
+                decoration: InputDecoration(labelText: '1回の摂取量（mg）'),
+                keyboardType: TextInputType.number,
+                onChanged: (value) {
+                  dose = int.tryParse(value) ?? 0; // nullの場合に0を設定
+                },
               ),
               SizedBox(height: 20),
               ElevatedButton(
@@ -96,6 +110,7 @@ class _AddSupplementScreenState extends State<AddSupplementScreen> {
                       form: form,
                       dose: dose,
                       dailyIntake: dailyIntake,
+                      remaining: remaining, // remainingを追加
                     );
                     Navigator.pop(context, updatedSupplement);
                   }

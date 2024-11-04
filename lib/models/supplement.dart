@@ -4,6 +4,7 @@ class Supplement {
   String form;
   int dose;
   int dailyIntake;
+  int remaining; //残薬数
 
   Supplement({
     required this.name,
@@ -11,6 +12,7 @@ class Supplement {
     required this.form,
     required this.dose,
     required this.dailyIntake,
+    required this.remaining, //残薬数を初期化
   });
 
    // Mapに変換するメソッド
@@ -21,6 +23,7 @@ class Supplement {
       'form': form,
       'dose': dose,
       'dailyIntake': dailyIntake,
+      'remaining': remaining, // 残薬数を保存
     };
   }
 
@@ -32,6 +35,7 @@ class Supplement {
       form: map['form'],
       dose: map['dose'],
       dailyIntake: map['dailyIntake'],
+      remaining: map['remaining'], // 残薬数を復元
     );
   }
 }
