@@ -173,32 +173,6 @@ Future<void> _showNotification(String supplementName, int remaining) async {
   }
 }
 
-// Future<void> _showNotification(String supplementName, int remaining) async {
-//   const AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-//     'supplement_channel', // 通知チャンネルID
-//     'サプリメント通知', // 通知チャンネル名
-//     description: 'サプリメントの残薬が少なくなった時に通知します', // 🔹 変更: `channelDescription` → `description`
-//     importance: Importance.max,
-//     priority: Priority.high,
-//     playSound: true,
-//   );
-
-//   const NotificationDetails notificationDetails =
-//       NotificationDetails(android: androidDetails);
-
-//   try {
-//     await flutterLocalNotificationsPlugin.show(
-//       0, // 通知ID
-//       '⚠️ サプリメントの残薬が少なくなっています！',
-//       '$supplementName の残薬が $remaining になりました。',
-//       notificationDetails,
-//     );
-//     print("✅ 通知を送信しました: $supplementName ($remaining)");
-//   } catch (e) {
-//     print("❌ 通知の送信エラー: $e");
-//   }
-// }
-
   DateTime _getDepletionDate(Supplement supplement) {
     int daysUntilEmpty = (supplement.remaining / supplement.dailyIntake).ceil();
     return DateTime.now().add(Duration(days: daysUntilEmpty - 1));
@@ -212,22 +186,6 @@ Future<void> _showNotification(String supplementName, int remaining) async {
       isAscending = !isAscending;
     });
   }
-
-  // void _reduceRemaining(int daysElapsed) {
-  //   setState(() {
-  //     for (var supplement in supplements) {
-  //       final previousRemaining = supplement.remaining;
-  //       supplement.remaining =
-  //           (supplement.remaining - (supplement.dailyIntake * daysElapsed))
-  //               .clamp(0, supplement.remaining);
-
-  //       if (previousRemaining > 20 && supplement.remaining <= 20) {
-  //         _showNotification(supplement.name, supplement.remaining);
-  //       }
-  //     }
-  //   });
-  //   _saveSupplements();
-  // }
 
   Future<void> _checkAndReduceRemaining() async {
     final prefs = await SharedPreferences.getInstance();
@@ -305,7 +263,7 @@ Future<void> _showNotification(String supplementName, int remaining) async {
           Expanded(
             child: supplements.isEmpty
                 ? Center(child: Text('サプリメントが登録されていません'))
-                : ListView.builder(
+                : ListView.separated(
                     itemCount: supplements.length,
                     itemBuilder: (context, index) {
                       final supplement = supplements[index];
@@ -349,6 +307,11 @@ Future<void> _showNotification(String supplementName, int remaining) async {
                         },
                       );
                     },
+                    separatorBuilder: (context, index) => const Divider(
+                      color: Colors.black,
+                      thickness: 2.0,
+                      height:10,
+                    ),
                   ),
           ),
         ],
