@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../models/supplement.dart';
 
+
+
 class AddSupplementScreen extends StatefulWidget {
   final Supplement? initialSupplement;
 
@@ -47,34 +49,38 @@ class _AddSupplementScreenState extends State<AddSupplementScreen> {
             children: [
               TextFormField(
                 initialValue: name,
-                decoration: InputDecoration(labelText: 'サプリメント名'),
+                decoration: InputDecoration(labelText: 'サプリメント名',
+                floatingLabelBehavior: FloatingLabelBehavior.always, // ラベルを最初から上に表示
+                   border: OutlineInputBorder(), 
+                    ),
+                
                 onChanged: (value) => name = value,
                 validator: (value) =>
                     value == null || value.isEmpty ? 'サプリメント名を入力してください' : null,
               ),
               // 他の入力フィールドも初期値を設定
               // カテゴリー
-              TextFormField(
-                initialValue: category,
-                decoration: InputDecoration(labelText: 'カテゴリー'),
-                onChanged: (value) => category = value,
-              ),
+              // TextFormField(
+              //   initialValue: category,
+              //   decoration: InputDecoration(labelText: 'カテゴリー'),
+              //   onChanged: (value) => category = value,
+              // ),
               // 形状
-              DropdownButtonFormField<String>(
-                value: form.isNotEmpty ? form : null,
-                decoration: InputDecoration(labelText: '形状'),
-                items: ['錠剤', 'カプセル', '粉末']
-                    .map((form) => DropdownMenuItem(
-                          value: form,
-                          child: Text(form),
-                        ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    form = value ?? '';
-                  });
-                },
-              ),
+              // DropdownButtonFormField<String>(
+              //   value: form.isNotEmpty ? form : null,
+              //   decoration: InputDecoration(labelText: '形状'),
+              //   items: ['錠剤', 'カプセル', '粉末']
+              //       .map((form) => DropdownMenuItem(
+              //             value: form,
+              //             child: Text(form),
+              //           ))
+              //       .toList(),
+              //   onChanged: (value) {
+              //     setState(() {
+              //       form = value ?? '';
+              //     });
+              //   },
+              // ),
               // 摂取量
               TextFormField(
                 initialValue: remaining.toString(),
@@ -92,14 +98,14 @@ class _AddSupplementScreenState extends State<AddSupplementScreen> {
                   dailyIntake = int.tryParse(value) ?? 1; // nullの場合に1を設定
                 },
               ),
-              TextFormField(
-                initialValue: dose.toString(),
-                decoration: InputDecoration(labelText: '1回の摂取量（mg）'),
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  dose = int.tryParse(value) ?? 0; // nullの場合に0を設定
-                },
-              ),
+              // TextFormField(
+              //   initialValue: dose.toString(),
+              //   decoration: InputDecoration(labelText: '1回の摂取量（mg）'),
+              //   keyboardType: TextInputType.number,
+              //   onChanged: (value) {
+              //     dose = int.tryParse(value) ?? 0; // nullの場合に0を設定
+              //   },
+              // ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {

@@ -7,7 +7,7 @@ class SupplementDetailScreen extends StatefulWidget {
   final Function(Supplement) onUpdate;
   final Function(Supplement) onDelete;
 
-  SupplementDetailScreen({
+  const SupplementDetailScreen({super.key, 
     required this.supplement,
     required this.onUpdate,
     required this.onDelete,
@@ -35,9 +35,9 @@ class _SupplementDetailScreenState extends State<SupplementDetailScreen> {
                   ),
                 ),
               );
-              if (updatedSupplement != null) {
-                widget.onUpdate(updatedSupplement);
-                setState(() {});
+              if (updatedSupplement != null && updatedSupplement is Supplement) {
+                widget.onUpdate(updatedSupplement); // 🔹 リストを更新
+                setState(() {}); // 🔹 画面をリフレッシュ
               }
             },
           ),
@@ -55,13 +55,16 @@ class _SupplementDetailScreenState extends State<SupplementDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('カテゴリー: ${widget.supplement.category}'),
+           
             SizedBox(height: 8),
-            Text('形状: ${widget.supplement.form}'),
+            Text('1日の摂取回数: ${widget.supplement.dailyIntake} 回',
+            style: TextStyle(color: Colors.black), 
+            ),
+            // 文字色を黒に変更
             SizedBox(height: 8),
-            Text('1回の摂取量: ${widget.supplement.dose} mg'),
-            SizedBox(height: 8),
-            Text('1日の摂取回数: ${widget.supplement.dailyIntake} 回'),
+            Text('残薬数: ${widget.supplement.remaining}',
+            style: TextStyle(color: Colors.black), 
+            ),
           ],
         ),
       ),
