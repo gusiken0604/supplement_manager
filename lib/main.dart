@@ -260,60 +260,106 @@ Future<void> _showNotification(String supplementName, int remaining) async {
   onPressed: _forceTestNotification,
   child: Text("残薬を 20 に設定"),
 ),
-          Expanded(
-            child: supplements.isEmpty
-                ? Center(child: Text('サプリメントが登録されていません'))
-                : ListView.separated(
-                    itemCount: supplements.length,
-                    itemBuilder: (context, index) {
-                      final supplement = supplements[index];
-                      final depletionDate = _getDepletionDate(supplement);
-                      final formattedDepletionDate =
-                          '${depletionDate.year}/${depletionDate.month}/${depletionDate.day}';
+Expanded(
+  child: supplements.isEmpty
+      ? Center(child: Text('サプリメントが登録されていません'))
+      : Container(
+          height: double.infinity, // 高さを確保
+          child: ListView.separated(
+            itemCount: supplements.length,
+            itemBuilder: (context, index) {
+              final supplement = supplements[index];
+              final depletionDate = _getDepletionDate(supplement);
+              final formattedDepletionDate =
+                  '${depletionDate.year}/${depletionDate.month}/${depletionDate.day}';
 
-                      return ListTile(
-                        title: Text(supplement.name),
-                        subtitle: Text(
-                          //'カテゴリー: ${supplement.category}, 形状: ${supplement.form}\n'
-                          '残薬数: ${supplement.remaining}\n'
-                          '無くなる日: $formattedDepletionDate',
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SupplementDetailScreen(
-                                supplement: supplement,
-                                onUpdate: (updatedSupplement) {
-                                  setState(() {
-                                    final index = supplements.indexWhere(
-                                        (s) => s.name == updatedSupplement.name);
-                                    if (index != -1) {
-                                      supplements[index] = updatedSupplement;
-                                    }
-                                  });
-                                  _saveSupplements();
-                                },
-                                onDelete: (deletedSupplement) {
-                                  setState(() {
-                                    supplements.removeWhere(
-                                        (s) => s.name == deletedSupplement.name);
-                                  });
-                                  _saveSupplements();
-                                },
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    separatorBuilder: (context, index) => const Divider(
-                      color: Colors.black,
-                      thickness: 2.0,
-                      height:10,
+              return ListTile(
+                title: Text(supplement.name),
+                subtitle: Text(
+                  '残薬数: ${supplement.remaining}\n'
+                  '無くなる日: $formattedDepletionDate',
+                ),
+                onTap: () async {
+                  final updatedSupplement = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddSupplementScreen(
+                        supplement: supplement, // 既存のサプリメント情報を渡す
+                      ),
                     ),
-                  ),
+                  );
+
+                  if (updatedSupplement != null) {
+                    setState(() {
+                      supplements[index] = updatedSupplement; // 変更を反映
+                    });
+                    _saveSupplements();
+                  }
+                },
+              );
+            },
+            separatorBuilder: (context, index) => Divider(
+              color: Colors.black, // 色を黒に設定
+              thickness: 1.0, // 線の太さ
+              height: 10, // 間隔
+            ),
           ),
+        ),
+),
+          // Expanded(
+          //   child: supplements.isEmpty
+          //       ? Center(child: Text('サプリメントが登録されていません'))
+          //       : ListView.separated(
+          //           itemCount: supplements.length,
+          //           itemBuilder: (context, index) {
+          //             final supplement = supplements[index];
+          //             final depletionDate = _getDepletionDate(supplement);
+          //             final formattedDepletionDate =
+          //                 '${depletionDate.year}/${depletionDate.month}/${depletionDate.day}';
+
+          //             return ListTile(
+          //               title: Text(supplement.name),
+          //               subtitle: Text(
+          //                 //'カテゴリー: ${supplement.category}, 形状: ${supplement.form}\n'
+          //                 '残薬数: ${supplement.remaining}\n'
+          //                 '無くなる日: $formattedDepletionDate',
+          //               ),
+          //               onTap: () {
+          //                 Navigator.push(
+          //                   context,
+          //                   MaterialPageRoute(
+          //                     builder: (context) => SupplementDetailScreen(
+          //                       supplement: supplement,
+          //                       onUpdate: (updatedSupplement) {
+          //                         setState(() {
+          //                           final index = supplements.indexWhere(
+          //                               (s) => s.name == updatedSupplement.name);
+          //                           if (index != -1) {
+          //                             supplements[index] = updatedSupplement;
+          //                           }
+          //                         });
+          //                         _saveSupplements();
+          //                       },
+          //                       onDelete: (deletedSupplement) {
+          //                         setState(() {
+          //                           supplements.removeWhere(
+          //                               (s) => s.name == deletedSupplement.name);
+          //                         });
+          //                         _saveSupplements();
+          //                       },
+          //                     ),
+          //                   ),
+          //                 );
+          //               },
+          //             );
+          //           },
+          //           separatorBuilder: (context, index) => const Divider(
+          //             color: Colors.black,
+          //             thickness: 2.0,
+          //             height:10,
+          //           ),
+          //         ),
+          // ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

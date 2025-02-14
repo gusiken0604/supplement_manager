@@ -31,7 +31,7 @@ class _SupplementDetailScreenState extends State<SupplementDetailScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => AddSupplementScreen(
-                    initialSupplement: widget.supplement,
+                    supplement: widget.supplement,
                   ),
                 ),
               );
